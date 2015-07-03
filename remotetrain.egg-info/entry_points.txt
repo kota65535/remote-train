@@ -1,0 +1,5 @@
+      [paste.app_factory]
+      main = remotetrain:main
+      [console_scripts]
+      initialize_remotetrain_db = remotetrain.scripts.initializedb:main
+      

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="shortcut icon"
+	href="${request.static_url('remotetrain:static/yaju.ico')}" />
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet"
+	href="${request.static_url('remotetrain:static/bootstrap/css/bootstrap.css')}" />
+<!-- Bootstrap theme -->
+<link rel="stylesheet"
+	href="${request.static_url('remotetrain:static/bootstrap/css/bootstrap-theme.css')}" />
+<!-- Custom styles for this template
+    <link href="${request.static_url('remotetrain:static/theme.css')}" rel="stylesheet">
+    -->
+<title>Login - Remote Train Controller</title>
+</head>
+<body>
+	<div class="col-md-6 col-md-offset-3">
+		<form class="form-signin" action="${url}" method="post">
+			<h2 class="form-signin-heading">Please sign in</h2>
+			<span>${message}</span> 
+			<label for="inputEmail" class="sr-only">Username</label>
+			<input type="text" name="login" class="form-control"
+				placeholder="Username" value="${login}" required autofocus>
+			<label for="inputPassword" class="sr-only">Password</label> 
+			<input type="password" name="password" class="form-control"
+				placeholder="Password" required> 
+			<input type="hidden" name="came_from" value="${came_from}" />
+			<button class="btn btn-lg btn-primary btn-block"
+				name="form-signin.submitted" type="submit">Sign in</button>
+		</form>
+	</div>
+	<!-- /container -->
+	<div id="footer">
+		<div class="footer">&copy; Copyright 1987-2015, Tomohiko Ozawa.</div>
+	</div>
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script type="text/javascript"
+		src="${request.static_url('remotetrain:static/jquery.js')}"></script>
+	<script type="text/javascript"
+		src="${request.static_url('remotetrain:static/bootstrap/js/bootstrap.js')}"></script>
+</body>
+</html>

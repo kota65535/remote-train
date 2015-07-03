@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+<link rel="shortcut icon" href="${request.static_url('remotetrain:static/yaju.ico')}" />
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="${request.static_url('remotetrain:static/bootstrap/css/bootstrap.css')}" />
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="${request.static_url('remotetrain:static/bootstrap/css/bootstrap-theme.css')}" />
+
+<title>View page - Remote Train Controller</title>
+
+</head>
+<body>
+	<div class="middle align-right">
+		<div id="left" class="app-welcome align-left">
+			<span>Logged in as: ${logged_in}</span>
+		</div>
+		<div id="right" class="app-welcome align-right"></div>
+	</div>
+	<canvas id="liveview" width="640" height="360"></canvas>
+	<div id='jpeg_name'></div>
+
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script type="text/javascript" src="${request.static_url('remotetrain:static/jquery.js')}"></script>
+	<script type="text/javascript" src="${request.static_url('remotetrain:static/bootstrap/js/bootstrap.js')}"></script>
+</body>
+</html>
