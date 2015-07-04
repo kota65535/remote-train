@@ -38,7 +38,7 @@ def check_route(iface):
     except Exception:
         logger.error("Failed to check route.")
         return False 
-    match_o = re.search(r"^239\.255\.255\.0.*{0}".format(iface), re.MULTILINE)
+    match_o = re.search(r"^239\.255\.255\.0.*{0}".format(iface), output, re.MULTILINE)
     if match_o:
         return True
     else:
