@@ -50,7 +50,7 @@ class RootFactory(object):
     """
     アクセス制御リスト
     """
-    __acl__ = [ (Allow, Everyone, 'view'),
+    __acl__ = [ (Allow, 'group:viewers', 'view'),
                 (Allow, 'group:editors', 'edit') ]
     def __init__(self, request):
         pass

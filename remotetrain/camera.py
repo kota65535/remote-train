@@ -1,6 +1,6 @@
 from remotetrain.liveview import LiveviewServerProccess
 from remotetrain.mylogger import getLogger
-from remotetrain.ssdp import discover
+from remotetrain.ssdp import discover, NoDeviceFoundError
 from urllib.error import URLError
 import bs4
 import json
@@ -8,6 +8,8 @@ import re
 import requests
 import subprocess
 import urllib.request
+import os
+import netifaces
 
 logger = getLogger(__name__)
 
@@ -26,16 +28,17 @@ def check_connection(iface):
     try:
         output = subprocess.check_output(['iwconfig', iface], stderr=subprocess.STDOUT).decode('utf-8')
         match_o = re.search(r'^{0}.*ESSID:"(\S+)"'.format(iface), output, re.MULTILINE)
+        logger.debug("iwconfig:" + os.linesep + output)
     except Exception as e:
         # for MaxOS
         try:
             output = subprocess.check_output(['networksetup', '-getairportnetwork', iface], stderr=subprocess.STDOUT).decode('utf-8')
             match_o = re.search(r'^Current Wi-Fi Network: (\S+)', output, re.MULTILINE)
+            logger.debug("networksetup:" + os.linesep + output)
         except Exception as e:
             # コマンドの実行に失敗。コマンドが無い、存在しないインターフェースを指定した、など。
             raise SystemError("Failed to check connection.")
     
-    logger.debug(output)
     if match_o:
         return match_o.group(1)
     else:
@@ -64,10 +67,12 @@ def connect_iface(iface):
         logger.debug("'{0}' is not connected yet. Restarting it...".format(iface))
         try:
             output = subprocess.check_output(['sudo', 'ifdown', iface], stderr=subprocess.STDOUT)
+            logger.debug(output.decode('utf-8'))
             output = subprocess.check_output(['sudo', 'ifup', iface], stderr=subprocess.STDOUT)
+            logger.debug(output.decode('utf-8'))
         except Exception as e:
             raise
-        logger.debug(output.decode('utf-8'))
+        
         try:
             ssid = check_connection(iface)
         except Exception as e:
@@ -78,6 +83,8 @@ def connect_iface(iface):
         else:
             raise ConnectionError("Failed to connect interface {0}".format(iface))
 
+class CameraConnectionError(Exception):
+    pass
 
 def discover_sony_camera(iface):
     """
@@ -98,14 +105,12 @@ def discover_sony_camera(iface):
         logger.debug(dd_location)
         with urllib.request.urlopen(dd_location) as page:
             content = page.read().decode()
-    except ConnectionError as e:
-#         logger.exception("Failed to connect {0}.".format(iface))
-        raise
-    except URLError as e:
-#         logger.exception("Failed to discover camera.")
+    except (ConnectionError, NoDeviceFoundError, URLError) as e:
+        logger.error("Failed to connect to camera.")
         raise
     
     logger.debug(content)
+    
     try:
         soup = bs4.BeautifulSoup(content, 'xml')
         logger.debug(soup.prettify())
@@ -117,8 +122,8 @@ def discover_sony_camera(iface):
             name = e.find('X_ScalarWebAPI_ServiceType').text
             url = e.find('X_ScalarWebAPI_ActionList_URL').text +'/' + name
             service_and_url[name] = url
-    except Exception as e:
-        logger.exception("Failed to parse the device descriptor XML.")
+    except Exception as e: 
+        logger.error("Failed to parse the device descriptor XML.")
         raise
                 
     logger.info("Camera is discovered. Model-name: {0}.".format(model_name)) 
@@ -136,6 +141,10 @@ class CameraAPI:
         "id": 1,
         "version": "1.0"
     }
+    
+#     liveview_server_address = "192.168.1.18"
+    liveview_server_address = "127.0.0.1"
+    liveview_server_port = 9000
     
     def __init__(self, iface):
         self.iface = iface
@@ -157,7 +166,7 @@ class CameraAPI:
             self.camera_api('startRecMode', [])
         except Exception as e:
             self.is_available = False
-            logger.exception("Camera API is not available.")
+            logger.exception("Camera API is not available now.")
             return None
         
         logger.info("Camera API is ready to use.")
@@ -199,7 +208,10 @@ class CameraAPI:
         
         try:
             res = self.camera_api('startLiveview', [])
-            self.liveview_server_proc = LiveviewServerProccess(res['result'][0], "remotetrain/liveview")
+            self.liveview_server_proc = LiveviewServerProccess(res['result'][0], 
+                                                               "remotetrain/liveview",
+                                                               self.liveview_server_address,
+                                                               self.liveview_server_port)
             self.liveview_server_proc.start()
         except Exception as e:
             logger.exception("Failed to start liveview streaming.")

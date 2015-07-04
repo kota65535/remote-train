@@ -30,7 +30,7 @@ from remotetrain.commander import Commander
 g_Commander = Commander('/dev/ttyACM0', 9600)
 
 from remotetrain.camera import CameraAPI
-g_Camera = CameraAPI('wlan1')
+g_Camera = CameraAPI('en0')
 
 
 @view_config(route_name='home', 
@@ -77,17 +77,28 @@ def logout(request):
                      headers = headers)
 
 
+class CameraUnavailableError(Exception):
+    pass
+
 @view_config(route_name='view_page', 
              renderer='templates/view.html', 
              permission='view')
 def view_page(request):
     
-    # initialize CameraAPI object
+    # カメラAPIオブジェクトの初期化
     global g_Camera
     g_Camera.reinitialize()
+    if g_Camera.is_available:
+        return dict(logged_in = authenticated_userid(request))
+    else:
+        raise CameraUnavailableError
     
-    return dict(logged_in = authenticated_userid(request))
 
+@view_config(context=CameraUnavailableError,
+             renderer='templates/error.html')
+def camera_error_page(exc, request):
+    return dict(logged_in = authenticated_userid(request),
+                message="Sorry, camera is not available now.")
 
 
 @view_config(route_name='edit_page', 

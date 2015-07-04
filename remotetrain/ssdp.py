@@ -1,10 +1,12 @@
 import socket
 import http.client
 import io
-from urllib.error import URLError
 from remotetrain.mylogger import getLogger
 
 logger = getLogger(__name__)
+
+class NoDeviceFoundError(Exception):
+    pass
 
 class SSDPResponse(object):
     """
@@ -33,6 +35,8 @@ def discover(service, timeout=2, retries=10):
     :raise: URLError
     """
     
+    logger.info("SSDP discovery. Search target: {0}".format(service))
+    
     group = ("239.255.255.250", 1900)
     message = "\r\n".join([
         'M-SEARCH * HTTP/1.1',
@@ -59,7 +63,7 @@ def discover(service, timeout=2, retries=10):
         if len(responses) > 0:
             break
     else:
-        raise ConnectionError("Failed to discover camera.")
+        raise NoDeviceFoundError("Device not found.")
     
     return responses
     

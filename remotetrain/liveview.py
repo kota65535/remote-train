@@ -108,7 +108,11 @@ class LiveviewDownloadingThread(threading.Thread):
     
     def run(self):
         logger.info("Starting liveview downloading thread.")
-        self.liveview_main()
+        try:
+            self.liveview_main()
+        except Exception:
+            logger.exception("Failed to start downloading liveview.")
+            return
         logger.info("Liveview downloading thread finished.")
     
     def stop(self):
@@ -127,8 +131,8 @@ class LiveviewDownloadingThread(threading.Thread):
             # GETリクエストを送り、ストリームとしてレスポンスを順次読み込んでいく
             rsp = requests.get(self.endpoint_url, stream=True)
         except Exception as e:
-            logger.exception("Failed to connect to '{0}'.".format(self.endpoint_url))
-            return None
+            logger.error("GET Request to '{0}' failed.".format(self.endpoint_url))
+            raise
         
         buffer = b''
         last_time = 0
@@ -189,7 +193,8 @@ class LiveviewDownloadingThread(threading.Thread):
                         self.callback(jpeg_name.lstrip("remotetrain/"))
         
         except Exception as e:
-            logger.exception("Error occurred during downloading liveview images.")
+            logger.error("Error occurred during downloading liveview images.")
+            raise
         
         logger.info("Liveview downloading finished.")
     
@@ -200,7 +205,7 @@ class LiveviewServerProccess(multiprocessing.Process):
     """
     ライブビュー画像をダウンロードし、ブラウザに通知するWebSocketサーバークラス
     """
-    def __init__(self, liveview_url, download_path):
+    def __init__(self, liveview_url, download_path, address, port):
         """
         :param str endpoint_url: ライブビューのURL
         :param str dst_dir: ライブビュー画像のダウンロード先ディレクトリパス
@@ -208,13 +213,19 @@ class LiveviewServerProccess(multiprocessing.Process):
         """
         self.liveview_url = liveview_url
         self.download_path = download_path
+        self.address = address
+        self.port = port
         self.loop = None
         self.server = None
         super().__init__()
 
     def run(self):
         logger.info("Starting liveview server...")
-        self.run_liveview_server()
+        try:
+            self.run_liveview_server()
+        except Exception:
+            logger.exception("Failed to start liveview server.")
+            return
         logger.info("Liveview server finished.")
     
     def stop(self):
@@ -235,11 +246,11 @@ class LiveviewServerProccess(multiprocessing.Process):
         
         factory = LiveviewServerFactory(self.liveview_url, 
                                         self.download_path,
-                                        "ws://192.168.1.18:9000", 
+                                        "ws://{0}:{1}".format(self.address, self.port), 
                                         debug=False)
         
         self.loop = asyncio.get_event_loop()
-        coro = self.loop.create_server(factory, '192.168.1.18', 9000)
+        coro = self.loop.create_server(factory, self.address, self.port)
         self.server = self.loop.run_until_complete(coro)
         self.loop.run_forever()
         self.server.close()
