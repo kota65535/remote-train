@@ -100,7 +100,7 @@ def discover_sony_camera(iface):
     
     try:
         connect_iface(iface)
-        responses = discover("urn:schemas-sony-com:service:ScalarWebAPI:1", timeout=2, retries=8)
+        responses = discover(iface, "urn:schemas-sony-com:service:ScalarWebAPI:1", timeout=2, retries=8)
         dd_location = responses[0]["LOCATION"]
         logger.debug(dd_location)
         with urllib.request.urlopen(dd_location) as page:
