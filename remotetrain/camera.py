@@ -149,18 +149,19 @@ class CameraAPI:
         logger.info("Camera API has been destructed.")
         
     def initialize(self):
+        logger.info("Initializing camera API...")
         try:
-            logger.info("Initializing camera API...")
             self.model_name, self.endpoints = discover_sony_camera(self.iface)
             self.is_available = True
             self.start_liveview_server_process()
             self.camera_api('startRecMode', [])
-            logger.info("Camera API is ready to use.")
         except Exception as e:
             self.is_available = False
             logger.exception("Camera API is not available.")
-            
-            
+            return None
+        
+        logger.info("Camera API is ready to use.")
+        
     def reinitialize(self):
         self.__del__()
         self.initialize()
