@@ -220,7 +220,7 @@ class LiveviewServerProccess(multiprocessing.Process):
         super().__init__()
 
     def run(self):
-        logger.info("Starting liveview server...")
+        logger.info("Starting liveview server on 'ws://{0}:{1}'...".format(self.address, self.port))
         try:
             self.run_liveview_server()
         except Exception:
@@ -229,7 +229,11 @@ class LiveviewServerProccess(multiprocessing.Process):
         logger.info("Liveview server finished.")
     
     def stop(self):
-        if self.loop and self.server:
+        logger.info("Stopping...")
+        if self.server:
+            self.server.close()
+        if self.loop:
+            logger.info("Stopping liveview server...")
             self.loop.stop()
             self.server.close()
             self.loop.close()
@@ -240,7 +244,7 @@ class LiveviewServerProccess(multiprocessing.Process):
         """
         ライブビューサーバーを開始する
         """
-         
+        
         # サブプロセスを立ち上げるとデフォルトイベントループが未設定なので、新しく作って設定する
         asyncio.set_event_loop(asyncio.new_event_loop())
         
@@ -252,6 +256,7 @@ class LiveviewServerProccess(multiprocessing.Process):
         self.loop = asyncio.get_event_loop()
         coro = self.loop.create_server(factory, self.address, self.port)
         self.server = self.loop.run_until_complete(coro)
+        logger.info("Liveview server is now serving.")
         self.loop.run_forever()
         self.server.close()
         self.loop.close()
