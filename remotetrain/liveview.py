@@ -185,7 +185,7 @@ class LiveviewDownloadingThread(threading.Thread):
                         write_interval = time.time() - write_start
                         # 1つ前のペイロードとの時間間隔
                         payload_interval = common_header.timeStamp - last_time
-                        logger.info("Got liveview image '{0}', write-time={1} ms, interval: {2} ms.".format(jpeg_name, write_interval, payload_interval))
+                        logger.info("Got liveview image '{0}', write-time={1:.1f} ms, interval: {2} ms.".format(jpeg_name, write_interval*1000, payload_interval))
                         last_time = common_header.timeStamp
                         # バッファをリセット
                         buffer = b''
