@@ -12,6 +12,8 @@ def getLogger(name):
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
     
+    fh = logging.FileHandler("test.log", "a+")
+    logger.addHandler(fh)
 #     logger.addHandler(handler)
     
     return logger

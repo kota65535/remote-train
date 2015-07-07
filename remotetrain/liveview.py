@@ -164,12 +164,12 @@ class LiveviewDownloadingThread(threading.Thread):
                         if payload_header_data:
                             buffer += payload_header_data
                     # ペイロードヘッダをパースし、ペイロードデータ(jpeg)のサイズを調べる
-                    logger.debug('Parsing payload header...')
+#                     logger.debug('Parsing payload header...')
                     payload_header = payload_header_struct.parse(buffer[payload_start:payload_start+128])
                     jpeg_data_size = ( payload_header.payloadDataSize & 0xFFFFFF00 ) >> 8
                     padding_size = payload_header.payloadDataSize & 0x000000FF
-                    logger.debug('start code: 0x%x' % (payload_header.startCode))
-                    logger.debug('jpeg size: %d, padding: %d)' % (jpeg_data_size, padding_size))
+#                     logger.debug('start code: 0x%x' % (payload_header.startCode))
+#                     logger.debug('jpeg size: %d, padding: %d)' % (jpeg_data_size, padding_size))
                     # ペイロードデータを読み込む
                     jpeg_data = next(rsp.iter_content(jpeg_data_size))
                     if jpeg_data:

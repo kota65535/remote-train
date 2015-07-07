@@ -183,7 +183,7 @@ class CameraAPI:
             try:
                 res = requests.post(self.endpoints['camera'], data=json.dumps(self.json_request))
             except Exception as e:
-                logger.excepton("No response.")
+                logger.error("Failed to execute API. method='{0}, params={1}'".format(method, params))
                 return None
             else:
                 return json.loads(res.content.decode('utf-8'))
@@ -197,7 +197,7 @@ class CameraAPI:
             try:
                 res = requests.post(self.endpoints['avContent'], data=self.json_request)
             except Exception as e:
-                logger.excepton("No response.")
+                logger.error("Failed to execute API. method='{0}, params={1}'".format(method, params))
                 return None
             else:
                 return json.loads(res.content.decode('utf-8'))
