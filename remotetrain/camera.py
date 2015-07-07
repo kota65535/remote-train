@@ -142,8 +142,8 @@ class CameraAPI:
         "version": "1.0"
     }
     
-#     liveview_server_address = "192.168.1.18"
-    liveview_server_address = "127.0.0.1"
+    liveview_server_address = "192.168.1.18"
+#     liveview_server_address = "127.0.0.1"
     liveview_server_port = 9000
     
     def __init__(self, iface):

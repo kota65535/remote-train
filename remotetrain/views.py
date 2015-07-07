@@ -30,7 +30,7 @@ from remotetrain.commander import Commander
 g_Commander = Commander('/dev/ttyACM0', 9600)
 
 from remotetrain.camera import CameraAPI
-g_Camera = CameraAPI('en0')
+g_Camera = CameraAPI('wlan1')
 
 
 @view_config(route_name='home', 
