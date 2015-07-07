@@ -2,3 +2,4 @@
 *.pyc
 dist/
 test.log
+remotetrain/liveview/*
