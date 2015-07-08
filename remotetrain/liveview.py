@@ -57,7 +57,7 @@ class LiveviewServerProtocol(WebSocketServerProtocol):
 
 
     def onDownload(self, jpeg_path):
-        logger.info("Notify '{0}' to client.".format(jpeg_path))
+        logger.debug("Notify '{0}' to client.".format(jpeg_path))
         
         self.sendMessage(jpeg_path.encode('utf-8'))
     
@@ -185,7 +185,7 @@ class LiveviewDownloadingThread(threading.Thread):
                         write_interval = time.time() - write_start
                         # 1つ前のペイロードとの時間間隔
                         payload_interval = common_header.timeStamp - last_time
-                        logger.info("Got liveview image '{0}', write-time={1:.1f} ms, interval: {2} ms.".format(jpeg_name, write_interval*1000, payload_interval))
+                        logger.debug("Got liveview image '{0}', write-time={1:.1f} ms, interval: {2} ms.".format(jpeg_name, write_interval*1000, payload_interval))
                         last_time = common_header.timeStamp
                         # バッファをリセット
                         buffer = b''
