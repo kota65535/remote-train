@@ -209,7 +209,7 @@ class CameraAPI:
         try:
             res = self.camera_api('startLiveview', [])
             self.liveview_server_proc = LiveviewServerProccess(res['result'][0], 
-                                                               "liveview",
+                                                               "remotetrain/liveview",
                                                                self.liveview_server_address,
                                                                self.liveview_server_port)
             self.liveview_server_proc.start()
