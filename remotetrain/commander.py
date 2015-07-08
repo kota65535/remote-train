@@ -1,7 +1,7 @@
 import serial
-from remotetrain.mylogger import getLogger
+import logging
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Commander:

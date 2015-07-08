@@ -1,5 +1,5 @@
 from remotetrain.liveview import LiveviewServerProccess
-from remotetrain.mylogger import getLogger
+import logging
 from remotetrain.ssdp import discover, NoDeviceFoundError
 from urllib.error import URLError
 import bs4
@@ -11,7 +11,7 @@ import urllib.request
 import os
 import netifaces
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def check_connection(iface):

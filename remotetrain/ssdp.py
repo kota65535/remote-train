@@ -1,10 +1,10 @@
 import socket
 import http.client
 import io
-from remotetrain.mylogger import getLogger
+import logging
 from twisted.web.html import output
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class NoDeviceFoundError(Exception):
     pass

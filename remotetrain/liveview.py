@@ -2,15 +2,15 @@
 
 from autobahn.asyncio.websocket import WebSocketServerProtocol, WebSocketServerFactory
 from construct import Struct, Array, UBInt8, UBInt16, UBInt32
-from remotetrain.mylogger import getLogger
 import asyncio
+import logging
+import multiprocessing
 import os
 import requests
 import threading
-import multiprocessing
 import time
 
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 # コモンヘッダの構造
