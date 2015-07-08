@@ -36,6 +36,7 @@ class Commander:
         if self.is_available:
             string = self._build_command(name, value)
             self._send_string(string)
+            logger.debug("Sent command '{0}' to serial port '{0}'.".format(string, self.device_name))
         else:
             logger.error("Serial port '{0}' is not available.".format(self.device_name))
     

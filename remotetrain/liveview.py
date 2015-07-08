@@ -155,7 +155,7 @@ class LiveviewDownloadingThread(threading.Thread):
                     else:
                         common_header = common_header_struct.parse(buffer[common_start:payload_start])
                         
-                        logger.info(common_header)
+                        logger.debug(common_header)
                     
                     # ペイロードヘッダの残りを読み込む
                     bytes_rest = 128 - ( len(buffer) - payload_start )
