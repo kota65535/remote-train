@@ -27,10 +27,15 @@ from remotetrain.security import USERS
 
 # global variables.
 from remotetrain.commander import Commander
-g_Commander = Commander('/dev/ttyACM0', 9600)
+g_Commander = None
+# Commander('/dev/ttyACM0', 9600)
 
 from remotetrain.camera import CameraAPI
-g_Camera = CameraAPI('wlan1')
+g_Camera = None
+# CameraAPI('wlan1')
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 @view_config(route_name='home', 
@@ -87,7 +92,7 @@ def view_page(request):
     
     # カメラAPIオブジェクトの初期化
     global g_Camera
-    g_Camera.reinitialize()
+    g_Camera = CameraAPI("wlan1")
     if g_Camera.is_available:
         return dict(logged_in = authenticated_userid(request))
     else:
@@ -110,8 +115,8 @@ def edit_page(request):
     
     # initialize CameraAPI object
     global g_Camera, g_Commander
-    g_Camera.reinitialize()
-    g_Commander.reinitialize()
+    g_Camera = CameraAPI("wlan1")
+    g_Commander = Commander('/dev/ttyACM0', 9600)
     
     
     if settings is None:
@@ -128,7 +133,7 @@ def update_control(request):
 
     json_data = request.json_body
     
-    print(json_data)
+    logger.debug(json_data)
     
     for k, v in json_data.items():
         g_Commander.send_command(k, v)
@@ -142,7 +147,7 @@ def update_control(request):
 def camera_api(request):
 
     json_data = request.json_body
-    print(json_data)
+    logger.debug(json_data)
     
     g_Camera.camera_api(json_data['method'], json_data['params'])
     
@@ -154,7 +159,7 @@ def camera_api(request):
 def avContent_api(request):
 
     json_data = request.json_body
-    print(json_data)
+    logger.debug(json_data)
     
     g_Camera.avContent_api(json_data['method'], json_data['params'])
     

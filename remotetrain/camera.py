@@ -149,15 +149,7 @@ class CameraAPI:
     def __init__(self, iface):
         self.iface = iface
         self.liveview_server_proc = None
-        self.is_available = False
-    
-    def __del__(self):
-        logger.info("Destructing camera API...")
-        if self.liveview_server_proc:
-            self.liveview_server_proc.stop()
-        logger.info("Camera API has been destructed.")
         
-    def initialize(self):
         logger.info("Initializing camera API...")
         try:
             self.model_name, self.endpoints = discover_sony_camera(self.iface)
@@ -170,10 +162,16 @@ class CameraAPI:
             return None
         
         logger.info("Camera API is ready to use.")
-        
+    
+    def __del__(self):
+        logger.info("Destructing camera API...")
+        if self.liveview_server_proc:
+            self.liveview_server_proc.stop()
+        logger.info("Camera API has been destructed.")
+                
     def reinitialize(self):
         self.__del__()
-        self.initialize()
+        self.__init__()
     
     
     def camera_api(self, method, params):

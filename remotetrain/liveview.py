@@ -136,7 +136,7 @@ class LiveviewDownloadingThread(threading.Thread):
         
         buffer = b''
         last_time = 0
-    
+        count = 10
         try:
             # 128バイトずつ読み込む
             for data in rsp.iter_content(128):
@@ -149,6 +149,11 @@ class LiveviewDownloadingThread(threading.Thread):
                 # ペイロードヘッダの開始コードを探す
                 payload_start = buffer.find(b'\x24\x35\x68\x79')
                 if payload_start >= 0:
+                    if count > 0:
+                        count -= 1
+                        continue
+                    else:
+                        count = 10
                     common_start = payload_start - 8
                     if common_start < 0:
                         logger.error('Something wrong occured!')
