@@ -9,24 +9,19 @@ class Commander:
         self.device_name = device_name
         self.baud_rate = baud_rate
         self.ser = None
-        
-    def __del__(self):
-        if self.ser:
-            self.ser.close()
-    
-    def initialize(self):
         try:
             self.ser = serial.Serial(self.device_name, self.baud_rate)
         except Exception as e:
             logger.exception("Failed to connect to serial port '{0}'.".format(self.device_name))
             self.is_available = False
-        else:
-            logger.info("Connected to serial port '{0}'.".format(self.device_name))
-            self.is_available = True
+            return
+        logger.info("Connected to serial port '{0}'.".format(self.device_name))
+        self.is_available = True
+        
+    def __del__(self):
+        if self.ser:
+            self.ser.close()
             
-    def reinitialize(self):
-        self.__del__()
-        self.initialize()
         
     def send_command(self, name, value):
         """

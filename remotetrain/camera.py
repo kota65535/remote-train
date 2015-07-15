@@ -168,10 +168,6 @@ class CameraAPI:
         if self.liveview_server_proc:
             self.liveview_server_proc.stop()
         logger.info("Camera API has been destructed.")
-                
-    def reinitialize(self):
-        self.__del__()
-        self.__init__()
     
     
     def camera_api(self, method, params):
