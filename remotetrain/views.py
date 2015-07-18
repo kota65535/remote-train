@@ -14,7 +14,7 @@ from sqlalchemy.exc import DBAPIError
 from remotetrain.models import (
     DBSession,
     ControllerSettings,
-    DeviceSettings
+    CameraSettings
     )
 
 from pyramid.security import (
