@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/bin/pserve", line 9, in <module>
+    load_entry_point('pyramid==1.6a2', 'console_scripts', 'pserve')()
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/pyramid-1.6a2-py3.3.egg/pyramid/scripts/pserve.py", line 58, in main
+    return command.run()
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/pyramid-1.6a2-py3.3.egg/pyramid/scripts/pserve.py", line 325, in run
+    relative_to=base, global_conf=vars)
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/pyramid-1.6a2-py3.3.egg/pyramid/scripts/pserve.py", line 367, in loadserver
+    server_spec, name=name, relative_to=relative_to, **kw)
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/PasteDeploy-1.5.2-py3.3.egg/paste/deploy/loadwsgi.py", line 255, in loadserver
+    return loadobj(SERVER, uri, name=name, **kw)
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/PasteDeploy-1.5.2-py3.3.egg/paste/deploy/loadwsgi.py", line 271, in loadobj
+    global_conf=global_conf)
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/PasteDeploy-1.5.2-py3.3.egg/paste/deploy/loadwsgi.py", line 296, in loadcontext
+    global_conf=global_conf)
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/PasteDeploy-1.5.2-py3.3.egg/paste/deploy/loadwsgi.py", line 317, in _loadconfig
+    loader = ConfigLoader(path)
+  File "/home/tomohiko/RemoteTrain/.direnv/python-3.3.6/lib/python3.3/site-packages/PasteDeploy-1.5.2-py3.3.egg/paste/deploy/loadwsgi.py", line 393, in __init__
+    with open(filename) as f:
+FileNotFoundError: [Errno 2] No such file or directory: '/home/tomohiko/RemoteTrain/remotetrain/remotetrain/development.ini'
+Removing PID file pyramid.pid
