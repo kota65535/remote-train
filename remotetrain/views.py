@@ -7,6 +7,7 @@ from pyramid.view import (
 from pyramid.httpexceptions import (
     HTTPFound,
     HTTPNotFound,
+    HTTPInternalServerError
     )
 
 from sqlalchemy.exc import DBAPIError
@@ -94,10 +95,10 @@ def logout(request):
              permission='view')
 def view_page(request):
     logged_in = authenticated_userid(request)
-    camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
-    
-    if camera_conf is None:
-        return HTTPNotFound("Camera configuration is missing!")
+    try:
+        camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
+    except DBAPIError as e:
+        return HTTPInternalServerError("Camera configuration is not valid!")
     
     # カメラAPIオブジェクトの初期化
     global g_Camera
