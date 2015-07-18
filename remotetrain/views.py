@@ -96,7 +96,7 @@ def logout(request):
 def view_page(request):
     logged_in = authenticated_userid(request)
     try:
-        camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
+        camera_conf = DBSession.query(CameraSettings).filter_by(user=logged_in).first()
     except DBAPIError as e:
         return HTTPInternalServerError("Camera configuration is not valid!")
     
@@ -114,7 +114,7 @@ def view_page(request):
              renderer='templates/error.html')
 def camera_error_page(exc, request):
     return dict(logged_in = authenticated_userid(request),
-                message="Sorry, camera is not available now.")
+                message="Camera is not available now!")
 
 
 @view_config(route_name='controller_page', 
@@ -122,10 +122,11 @@ def camera_error_page(exc, request):
              permission='edit')
 def controller_page(request):
     logged_in = authenticated_userid(request)
-    controller_conf = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
-    
-    if controller_conf is None:
-        return HTTPNotFound("Controller configuration is missing!")
+    try:
+        controller_conf = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
+    except DBAPIError as e:
+        return HTTPInternalServerError("Controller configuration is not valid!")
+
         
     global g_Commander
     g_Commander = Commander(controller_conf.serial_device, 9600)
@@ -143,7 +144,7 @@ def controller_page(request):
              renderer='templates/error.html')
 def controller_error_page(exc, request):
     return dict(logged_in = authenticated_userid(request),
-                message="Sorry, controller is not available now.")
+                message="Controller is not available now!")
 
 
 
@@ -152,11 +153,11 @@ def controller_error_page(exc, request):
              permission='edit')
 def viewcon_page(request):
     logged_in = authenticated_userid(request)
-    camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
-    controller_conf = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
-    
-    if controller_conf is None:
-        return HTTPNotFound("Controller configuration is missing.")
+    try:
+        camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
+        controller_conf = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
+    except DBAPIError as e:
+        return HTTPInternalServerError("Camera/Controller configuration is not valid!")
     
     global g_Camera, g_Commander
     g_Camera = CameraAPI(camera_conf.interface)
