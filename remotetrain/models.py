@@ -33,12 +33,23 @@ class ControllerSettings(Base):
     """
     コントローラー設定テーブル
     """
-    __tablename__ = 'setting'
+    __tablename__ = 'controller_settings'
     user = Column(Text, primary_key=True)
+    serial_device = Column(Text)
     power_pack = Column(Integer)
     turnout = Column(Integer)
     feeder = Column(Integer)
-
+    
+class CameraSettings(Base):
+    """
+    カメラ設定テーブル
+    """
+    __tablename__ = 'camera_settings'
+    user = Column(Text, primary_key=True)
+    interface = Column(Text)
+    liveview_server_address = Column(Text)
+    liveview_server_port = Column(Text)
+    
 
 
 from pyramid.security import (

@@ -14,6 +14,7 @@ from sqlalchemy.exc import DBAPIError
 from remotetrain.models import (
     DBSession,
     ControllerSettings,
+    DeviceSettings
     )
 
 from pyramid.security import (
@@ -23,7 +24,6 @@ from pyramid.security import (
     )
 
 from remotetrain.security import USERS
-
 
 # global variables.
 from remotetrain.commander import Commander
@@ -36,6 +36,13 @@ g_Camera = None
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+class CameraUnavailableError(Exception):
+    pass
+
+class ControllerUnavailableError(Exception):
+    pass
 
 
 @view_config(route_name='home', 
@@ -82,19 +89,22 @@ def logout(request):
                      headers = headers)
 
 
-class CameraUnavailableError(Exception):
-    pass
-
 @view_config(route_name='view_page', 
              renderer='templates/view.html', 
              permission='view')
 def view_page(request):
+    logged_in = authenticated_userid(request)
+    camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
+    
+    if camera_conf is None:
+        return HTTPNotFound("Camera configuration is missing!")
     
     # カメラAPIオブジェクトの初期化
     global g_Camera
-    g_Camera = CameraAPI("wlan1")
+    g_Camera = CameraAPI(camera_conf.interface)
+    
     if g_Camera.is_available:
-        return dict(logged_in = authenticated_userid(request))
+        return dict(logged_in)
     else:
         raise CameraUnavailableError
     
@@ -106,24 +116,61 @@ def camera_error_page(exc, request):
                 message="Sorry, camera is not available now.")
 
 
-@view_config(route_name='edit_page', 
-             renderer='templates/edit.html', 
+@view_config(route_name='controller_page', 
+             renderer='templates/controller.html', 
              permission='edit')
-def edit_page(request):
+def controller_page(request):
     logged_in = authenticated_userid(request)
-    settings = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
+    controller_conf = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
     
-    # initialize CameraAPI object
+    if controller_conf is None:
+        return HTTPNotFound("Controller configuration is missing!")
+        
+    global g_Commander
+    g_Commander = Commander(controller_conf.serial_device, 9600)
+    
+    if g_Commander.is_available:
+        return dict(num_power_packs=controller_conf.power_pack,
+                    num_turnouts=controller_conf.turnout, 
+                    num_feeders=controller_conf.feeder, 
+                    logged_in=logged_in)
+    else:
+        raise ControllerUnavailableError
+    
+
+@view_config(context=ControllerUnavailableError,
+             renderer='templates/error.html')
+def controller_error_page(exc, request):
+    return dict(logged_in = authenticated_userid(request),
+                message="Sorry, controller is not available now.")
+
+
+
+@view_config(route_name='viewcon_page', 
+             renderer='templates/viewcon.html', 
+             permission='edit')
+def viewcon_page(request):
+    logged_in = authenticated_userid(request)
+    camera_conf = DBSession.query(DeviceSettings).filter_by(user=logged_in).first()
+    controller_conf = DBSession.query(ControllerSettings).filter_by(user=logged_in).first()
+    
+    if controller_conf is None:
+        return HTTPNotFound("Controller configuration is missing.")
+    
     global g_Camera, g_Commander
-    g_Camera = CameraAPI("wlan1")
-    g_Commander = Commander('/dev/ttyACM0', 9600)
+    g_Camera = CameraAPI(camera_conf.interface)
+    g_Commander = Commander(controller_conf.serial_device, 9600)
     
     
-    if settings is None:
-        return HTTPNotFound('No such page')
-
-    return dict(num_power_packs=settings.power_pack, num_turnouts=settings.turnout, num_feeders=3, logged_in=logged_in)
-
+    if not g_Camera.is_available:
+        raise CameraUnavailableError
+    if not g_Commander.is_available:
+        raise ControllerUnavailableError
+         
+    return dict(num_power_packs=controller_conf.power_pack,
+                num_turnouts=controller_conf.turnout, 
+                num_feeders=controller_conf.feeder, 
+                logged_in=logged_in)
 
 
 @view_config(route_name='update_control',
@@ -152,6 +199,7 @@ def camera_api(request):
     g_Camera.camera_api(json_data['method'], json_data['params'])
     
     return json_data
+
 
 @view_config(route_name='avContent_api',
              renderer='json',

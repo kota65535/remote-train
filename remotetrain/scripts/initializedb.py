@@ -14,7 +14,7 @@ from pyramid.scripts.common import parse_vars
 from remotetrain.models import (
     DBSession,
     ControllerSettings,
-    Base,
+    CameraSettings,
     )
 
 
@@ -36,6 +36,17 @@ def main(argv=sys.argv):
     DBSession.configure(bind=engine)
     Base.metadata.create_all(engine)
     with transaction.manager:
-        settings = ControllerSettings(user='editor', power_pack=2, turnout=10, feeder=3)
-        DBSession.add(settings)
+        controller_conf = ControllerSettings(user='editor',
+                                             serial_device='/dev/ttyACM0',
+                                             power_pack=2, 
+                                             turnout=10, 
+                                             feeder=3)
+        DBSession.add(controller_conf)
+        camera_conf = CameraSettings(user='editor', 
+                                     interface='wlan1')
+        DBSession.add(camera_conf)
+        camera_conf = CameraSettings(user='viewer', 
+                                     interface='wlan1')
+        DBSession.add(camera_conf)
+        
     
