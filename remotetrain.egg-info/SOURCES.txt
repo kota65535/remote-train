@@ -37,7 +37,7 @@ remotetrain/static/bootstrap/css/bootstrap.min.css
 remotetrain/static/bootstrap/js/bootstrap.js
 remotetrain/static/bootstrap/js/bootstrap.min.js
 remotetrain/static/bootstrap/js/npm.js
-remotetrain/templates/edit.html
+remotetrain/templates/controller.html
 remotetrain/templates/home.html
 remotetrain/templates/login.html
 remotetrain/templates/view.html
