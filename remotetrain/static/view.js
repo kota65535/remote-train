@@ -64,12 +64,16 @@ $(function() {
 
 
 function reset() {
-	$('#form_controller input[type="range"]').val(0);
-	$('#form_controller input[type="radio"][value="0"]').val([0]);
-	sendControllerForm();
-	$('#form_camera input[type="radio"][value="movie"]').val(["movie"]);
-	sendJson({"method": "setShootMode", "params": ["movie"]}, "/camera_api");
-
+	if ( $("#form_controller")[0] ) {
+		$('#form_controller input[type="range"]').val(0);
+		$('#form_controller input[type="radio"][value="0"]').val([0]);
+		sendControllerForm();
+	}
+	
+	if ( $("#form_camera")[0] ) {
+		$('#form_camera input[type="radio"][value="movie"]').val(["movie"]);
+		sendJson({"method": "setShootMode", "params": ["movie"]}, "/camera_api");	
+	}
 }
 
 function sendSingle(name, value, url) {
