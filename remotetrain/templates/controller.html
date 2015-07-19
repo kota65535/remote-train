@@ -26,32 +26,6 @@
 		</div>
 		<div id="right" class="app-welcome align-right"></div>
 	</div>
-	<div class="row">
-		<div class="col-md-6">
-			<canvas id="liveview" width="640" height="360"></canvas>
-		</div>
-		<div class="col-md-2">
-			<form id="form_camera" name="camera" method="post">
-				<h2>Camera Control</h2>
-				<button id="shoot" name="shoot" class="btn btn-default btn-lg btn-block" value="movie">Start Rec</button>
-				<ul>
-					<li>Shooting Mode</li>
-					<div class="row">
-						<div class="col-md-6">
-							<label><input type="radio" name="shooting_mode" value="movie" checked>Movie</label>
-						</div>
-						<div class="col-md-6">
-							<label><input type="radio" name="shooting_mode" value="still">Still</label>
-						</div>
-					</div>
-				</ul>
-			</form>
-		</div>
-		<div class="col-md-2"></div>
-		<div class="col-md-2"></div>
-	</div>
-	<div id='jpeg_name'></div>
-
 	<form id="form_controller" name="controller" action="${request.route_url('view_page')}" method="post">
 		<div class="row">
 			% for pn in range(1, num_power_packs+1):
